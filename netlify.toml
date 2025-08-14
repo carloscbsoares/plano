@@ -5,7 +5,7 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-  external_node_modules = ["@sendgrid/mail", "twilio"]
+  external_node_modules = ["@sendgrid/mail", "twilio", "@supabase/supabase-js"]
 
 [[scheduled.functions]]
   name = "daily"
