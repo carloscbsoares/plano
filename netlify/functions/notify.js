@@ -1,6 +1,5 @@
 import sendgrid from '@sendgrid/mail'
 import twilio from 'twilio'
-
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY || '')
 
 export const handler = async (event) => {
