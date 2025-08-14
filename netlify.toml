@@ -9,5 +9,4 @@
 
 [[scheduled.functions]]
   name = "daily"
-  # 07:00 UTC = 08:00 Africa/Luanda
-  cron = "0 7 * * *"
+  cron = "0 7 * * *" # 07:00 UTC = 08:00 Africa/Luanda
