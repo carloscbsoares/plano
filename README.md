@@ -1,15 +1,17 @@
-# Plano de Ação — Netlify
-Deploy: Netlify (Functions + Scheduled Functions)
-Data: 2025-08-14
+# Plano de Ação — Netlify (corrigido)
+- React + Vite
+- Netlify Functions (notify, daily)
+- Dependências incluídas: @sendgrid/mail, twilio
+- Bundler configurado com external_node_modules
 
-## Como usar
-1) `npm create vite@latest plano-acao -- --template react` (ou use este zip)
-2) Instale deps: `npm i`
-3) Rode local: `npm run dev` (ou `npx netlify-cli dev` para testar functions)
-4) Configure variáveis no Netlify:
+## Deploy
+1) `npm install`
+2) Conecte no Netlify (Import from Git) ou `npx netlify-cli deploy --build`
+3) Variáveis de ambiente no painel:
    - SENDGRID_API_KEY, FROM_EMAIL
-   - TWILIO_SID, TWILIO_TOKEN, TWILIO_FROM
-   - (Opcional) TASKS_JSON, NOTIFY_URL
-5) Deploy: `npx netlify-cli deploy --build --prod`
+   - (opcional) TWILIO_SID, TWILIO_TOKEN, TWILIO_FROM
+   - (opcional) TASKS_JSON, NOTIFY_URL=/.netlify/functions/notify
 
-Cron diário configurado às 07:00 UTC (08:00 Africa/Luanda) no `netlify.toml`.
+## Teste local
+- `npm run dev` para o front
+- `npx netlify-cli dev` para front + functions

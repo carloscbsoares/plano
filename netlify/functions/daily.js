@@ -8,12 +8,19 @@ export const handler = async () => {
     const pendentes = tasks.filter(t => (t.status || 'pendente') === 'pendente')
     const dueToday = pendentes.filter(t => t.due === today)
     const overdue  = pendentes.filter(t => t.due <  today)
+
     const notifyURL = process.env.NOTIFY_URL || '/.netlify/functions/notify'
     const notify = async (type, task) => {
-      await fetch(notifyURL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type, task }) })
+      await fetch(notifyURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, task })
+      })
     }
+
     for (const t of dueToday) await notify('due', t)
     for (const t of overdue)  await notify('overdue', t)
+
     return { statusCode: 200, body: JSON.stringify({ ok: true, dueToday: dueToday.length, overdue: overdue.length }) }
   } catch (err) {
     console.error(err)

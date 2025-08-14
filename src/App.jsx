@@ -2,20 +2,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 const uid = () => Math.random().toString(36).slice(2)
 const todayISO = () => new Date().toISOString().slice(0,10)
-const parseISO = (s) => new Date(`${s}T00:00:00`)
 const fmtBR = (s) => new Date(`${s}T00:00:00`).toLocaleDateString()
-
 const STORAGE_KEY = 'plano-acao-tasks-v1'
 
 function useTasks(){
-  const [tasks, setTasks] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] } catch { return [] }
+  const [tasks, setTasks] = useState(()=>{
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] }catch{ return [] }
   })
-  useEffect(()=>localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)), [tasks])
+  useEffect(()=>localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)),[tasks])
   return {
     tasks,
-    add: (t)=>setTasks(p=>[{...t, id: uid()}, ...p]),
-    upd: (id, patch)=>setTasks(p=>p.map(t=>t.id===id?{...t, ...patch}:t)),
+    add: (t)=>setTasks(p=>[{...t,id:uid()},...p]),
+    upd: (id,patch)=>setTasks(p=>p.map(t=>t.id===id?{...t,...patch}:t)),
     del: (id)=>setTasks(p=>p.filter(t=>t.id!==id)),
     setAll: setTasks
   }
@@ -27,21 +25,19 @@ function Badge({children, className=''}){
 
 export default function App(){
   const {tasks, add, upd, del, setAll} = useTasks()
-  const [q, setQ] = useState('')
-  const [status, setStatus] = useState('todos')
-  const [sort, setSort] = useState('dueAsc')
+  const [q,setQ]=useState(''); const [status,setStatus]=useState('todos'); const [sort,setSort]=useState('dueAsc')
 
   const list = useMemo(()=>{
-    const query = q.trim().toLowerCase()
+    const query=q.trim().toLowerCase()
     let L = tasks.filter(t => [t.title,t.owner,t.email,t.phone,t.notes].filter(Boolean).some(f=>f.toLowerCase().includes(query)))
-    if(status!=='todos') L = L.filter(t => t.status===status)
+    if(status!=='todos') L = L.filter(t=>t.status===status)
     switch(sort){
       case 'dueAsc': L.sort((a,b)=>a.due.localeCompare(b.due)); break
       case 'dueDesc': L.sort((a,b)=>b.due.localeCompare(a.due)); break
       case 'title': L.sort((a,b)=>a.title.localeCompare(b.title)); break
     }
     return L
-  }, [tasks,q,status,sort])
+  },[tasks,q,status,sort])
 
   useEffect(()=>{
     const today = todayISO()
@@ -50,7 +46,7 @@ export default function App(){
     if(dueToday.length || overdue.length){
       triggerNotifications({dueToday, overdue})
     }
-  }, [])
+  },[])
 
   return (
     <div style={{fontFamily:'system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial, sans-serif'}} className="min-h-screen bg-[#f7f8fb] text-slate-800">
@@ -64,7 +60,7 @@ export default function App(){
         </header>
 
         <TaskForm onAdd={add} />
-        
+
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <input className="col-span-2 rounded-xl border p-2" placeholder="Buscar..." value={q} onChange={e=>setQ(e.target.value)} />
           <select className="rounded-xl border p-2" value={status} onChange={e=>setStatus(e.target.value)}>
@@ -93,14 +89,12 @@ function TaskForm({onAdd}){
   const [phone,setPhone]=useState('')
   const [due,setDue]=useState(todayISO())
   const [notes,setNotes]=useState('')
-
   const submit=(e)=>{
     e.preventDefault()
     if(!title.trim()) return alert('Informe o título')
-    onAdd({title: title.trim(), owner: owner.trim(), email: email.trim(), phone: phone.trim(), due, notes: notes.trim(), status:'pendente'})
-    setTitle('');setOwner('');setEmail('');setPhone('');setDue(todayISO());setNotes('')
+    onAdd({title:title.trim(), owner:owner.trim(), email:email.trim(), phone:phone.trim(), due, notes:notes.trim(), status:'pendente'})
+    setTitle(''); setOwner(''); setEmail(''); setPhone(''); setDue(todayISO()); setNotes('')
   }
-
   return (
     <form onSubmit={submit} className="rounded-2xl border bg-white shadow-sm p-4 grid gap-3 sm:grid-cols-12">
       <input className="sm:col-span-3 rounded-xl border p-2" placeholder="Atividade" value={title} onChange={e=>setTitle(e.target.value)}/>
@@ -114,13 +108,13 @@ function TaskForm({onAdd}){
   )
 }
 
-function TaskList({tasks, onUpdate, onRemove}){
+function TaskList({tasks,onUpdate,onRemove}){
   const today = todayISO()
   return (
     <div className="mt-4 grid gap-3">
       {tasks.map(t=>{
         const isToday = t.due===today && t.status==='pendente'
-        const isLate = t.due<today && t.status==='pendente'
+        const isLate  = t.due<today  && t.status==='pendente'
         return (
           <div key={t.id} className={`rounded-2xl border p-4 bg-white shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${isLate?'border-red-300':isToday?'border-amber-300':'border-slate-200'}`}>
             <div className="flex-1">
@@ -154,8 +148,8 @@ function TaskList({tasks, onUpdate, onRemove}){
   )
 }
 
-function ImportExport({tasks, setAll}){
-  const exportCSV = () => {
+function ImportExport({tasks,setAll}){
+  const exportCSV = ()=>{
     const headers = ["id","title","owner","email","phone","due","notes","status"]
     const rows = tasks.map(t => headers.map(h => JSON.stringify(t[h] ?? "")).join(","))
     const csv = [headers.join(","), ...rows].join("\n")
@@ -164,19 +158,18 @@ function ImportExport({tasks, setAll}){
     const a = document.createElement("a"); a.href=url; a.download=`plano_acao_${todayISO()}.csv`; a.click(); URL.revokeObjectURL(url)
   }
 
-  const importCSV = (file) => {
+  const importCSV = (file)=>{
     const reader = new FileReader()
     reader.onload = (e)=>{
       const text = e.target.result
       const lines = text.split(/\r?\n/).filter(Boolean)
       const [header, ...rows] = lines
       const cols = header.split(",")
-      const out = rows.map(r => {
+      const out = rows.map(r=>{
         const parts = r.match(/(?:^|,)("(?:[^"]|"")*"|[^,]*)/g).map(x=>x.replace(/^,/, ""))
         const obj = {}
         cols.forEach((c,i)=>{
-          let v = parts[i] ?? ""
-          v = v.replace(/^"|"$/g,"").replace(/""/g,'"')
+          let v = parts[i] ?? ""; v = v.replace(/^"|"$/g,"").replace(/""/g,'"')
           obj[c] = v
         })
         if(!obj.id) obj.id = uid()
@@ -205,21 +198,21 @@ function Footer(){
   )
 }
 
-// Envio de notificações a partir do front (fallback); ideal é rodar pelo cron 'daily'
+// Frontend-trigger (fallback). Em produção, use a function 'daily' agendada.
 async function triggerNotifications({dueToday, overdue}){
-  const endpoint = '/.netlify/functions/notify'
-  const notifyBrowser = (title, body) => {
+  const endpoint='/.netlify/functions/notify'
+  const notifyBrowser=(title,body)=>{
     if('Notification' in window){
       if(Notification.permission==='granted') new Notification(title,{body})
       else if(Notification.permission!=='denied') Notification.requestPermission()
     }
   }
   for(const t of dueToday){
-    try{ await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'due', task:t})}) }catch{}
-    notifyBrowser(`Lembrete — ${t.title}`, `Hoje (${fmtBR(t.due)}). Resp.: ${t.owner || '—'}`)
+    try{ await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'due',task:t})}) }catch{}
+    notifyBrowser(`Lembrete — ${t.title}`, `Hoje (${fmtBR(t.due)}). Resp.: ${t.owner||'—'}`)
   }
   for(const t of overdue){
-    try{ await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'overdue', task:t})}) }catch{}
-    notifyBrowser(`Atrasada — ${t.title}`, `Venceu em ${fmtBR(t.due)}. Resp.: ${t.owner || '—'}`)
+    try{ await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'overdue',task:t})}) }catch{}
+    notifyBrowser(`Atrasada — ${t.title}`, `Venceu em ${fmtBR(t.due)}. Resp.: ${t.owner||'—'}`)
   }
 }
