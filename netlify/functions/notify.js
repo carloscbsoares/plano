@@ -1,41 +1,34 @@
-import nodemailer from "nodemailer";
-import twilio from "twilio";
+import nodemailer from 'nodemailer';
+import twilio from 'twilio';
 
 export async function handler(event, context) {
-  try {
-    // Configuração do Gmail
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
+  const tasks = JSON.parse(process.env.TASKS || '[]');
+
+  for (const t of tasks) {
+    // Envio de email
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS, // senha de app
-      },
+        pass: process.env.GMAIL_PASS
+      }
     });
 
-    // Enviar email
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
-      to: process.env.ALERT_EMAIL,
-      subject: "EasyPlano - Alerta de Tarefas",
-      text: "Este é um alerta automático do EasyPlano.",
+      to: t.email,
+      subject: `Alerta: ${t.name}`,
+      text: `Atividade: ${t.name}\nData: ${t.date}\nResponsável: ${t.responsavel}`
     });
 
-    // Enviar SMS com Twilio
+    // Envio de SMS
     const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
     await client.messages.create({
+      body: `Alerta: ${t.name} - Responsável: ${t.responsavel} (${t.date})`,
       from: process.env.TWILIO_PHONE,
-      to: process.env.ALERT_PHONE,
-      body: "EasyPlano: Você tem tarefas pendentes!",
+      to: t.telefone
     });
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Alertas enviados com sucesso!" }),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
   }
+
+  return { statusCode: 200, body: 'Notificações enviadas' };
 }

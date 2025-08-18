@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EasyPlano</title>
+  <title>Plano de Ação</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+<body>
+  <div class="container">
+    <h1>Plano de Ação</h1>
+    <form id="taskForm">
+      <input type="text" id="taskName" placeholder="Atividade" required />
+      <input type="date" id="taskDate" required />
+      <input type="text" id="responsavel" placeholder="Responsável" required />
+      <input type="email" id="email" placeholder="E-mail" required />
+      <input type="tel" id="telefone" placeholder="Telefone" required />
+      <button type="submit">Adicionar</button>
+    </form>
+    <ul id="taskList"></ul>
+    <button id="forceAlerts">Forçar alertas agora</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
