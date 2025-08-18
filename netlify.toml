@@ -1,12 +1,11 @@
+
 [build]
-  command = "npm run build"
-  publish = "dist"
+  publish = "public"
+  command = ""
 
-[functions]
-  node_bundler = "esbuild"
-  directory = "netlify/functions"
-  external_node_modules = ["@sendgrid/mail", "twilio", "@supabase/supabase-js"]
-
-[[scheduled.functions]]
-  name = "daily"
-  cron = "0 7 * * *" # 07:00 UTC = 08:00 Africa/Luanda
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

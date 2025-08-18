@@ -1,0 +1,63 @@
+
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EasyPlano</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script defer src="./config.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>EasyPlano</h1>
+      <div id="auth-area">
+        <div id="signed-out">
+          <input id="email" type="email" placeholder="seu@email.com" />
+          <button id="btn-magic">Entrar com Magic Link</button>
+        </div>
+        <div id="signed-in" class="hidden">
+          <span id="user-email"></span>
+          <button id="btn-logout">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="task-form" class="card hidden">
+        <h2>Nova tarefa</h2>
+        <form id="form-new">
+          <label>Título
+            <input required id="title" placeholder="Título da tarefa" />
+          </label>
+          <label>Descrição
+            <textarea id="description" placeholder="Detalhes..."></textarea>
+          </label>
+          <label>Prazo
+            <input id="due_date" type="date" />
+          </label>
+          <label>Responsáveis (e-mails, separados por vírgula)
+            <input id="assignees" placeholder="pessoa1@ex.com, pessoa2@ex.com" />
+          </label>
+          <button type="submit">Salvar</button>
+        </form>
+      </section>
+
+      <section class="card hidden" id="my-info">
+        <h2>Minhas permissões</h2>
+        <p>Você vê tarefas que você criou <strong>ou</strong> em que seu e-mail está listado como responsável.</p>
+      </section>
+
+      <section class="card hidden" id="task-list">
+        <h2>Tarefas</h2>
+        <ul id="tasks"></ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Desenvolvido por EasyPlano</small>
+    </footer>
+  </body>
+</html>
